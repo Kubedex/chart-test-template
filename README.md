@@ -2,6 +2,8 @@
 
 Clone this repo as a starting point for any new Helm Chart you'd like to create. This template supports one chart per repo.
 
+[![asciicast](https://asciinema.org/a/1HFqI8780RKjODUVsKcTRMiP0.svg)](https://asciinema.org/a/1HFqI8780RKjODUVsKcTRMiP0)
+
 Delete the `grafana` directory which is used as an example.
 
 Create a new chart by running `helm create chartname`.
