@@ -4,6 +4,10 @@ NAME := $(REPO)
 CHARTNAME := $(shell ls -1d */ | sed 's\#/\#\#' | grep -v 'tools')
 K3SVER := v0.7.0
 
+REGISTRYID := 000000000000
+REGISTRYREGION := us-east-1
+ECRTOKEN := $(shell aws ecr get-login --region $(REGISTRYREGION) --registry-ids $(REGISTRYID) | cut -d' ' -f6)
+
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
@@ -24,8 +28,10 @@ run:  ## Creates a docker network, runs this module image with volumes and defau
 	@bash -c "docker exec -t $(NAME) sh -c 'iptables -t nat -I POSTROUTING -s 10.42.0.0/16 -d 10.42.0.0/16 -j MASQUERADE'"
 	@bash -c "docker cp tools/helm $(NAME):/bin/helm"
 	@bash -c "docker cp tools/tiller $(NAME):/bin/tiller"
+	@bash -c "docker cp tools/imagepullsecret.sh $(NAME):/bin/imagepullsecret"
 	@bash -c "docker exec -t $(NAME) sh -c 'sleep 10'"
 	@bash -c "docker exec -t $(NAME) sh -c 'mkdir -p /.kube && kubectl config view --raw > /.kube/config'"
+	@bash -c "docker exec -t $(NAME) sh -c 'imagepullsecret $(CHARTNAME) $(REGISTRYID) $(REGISTRYREGION) $(ECRTOKEN)'"
 	@bash -c "docker exec -t $(NAME) sh -c 'kubectl create clusterrolebinding system:default --clusterrole=cluster-admin --serviceaccount=kube-system:default'"
 	@bash -c "docker exec -t $(NAME) sh -c 'helm init --wait'"
 
