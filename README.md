@@ -37,3 +37,26 @@ For example to exclude a `ci` and `docs` directory that you want to add update t
 ```
 CHARTNAME := $(shell ls -1d */ | sed 's\#/\#\#' | grep -v 'tools\|ci\|docs')
 ```
+
+# Using with ECR
+
+Change the `REGISTRYID` and `REGISTRYREGION` variable at the top of the `Makefile`.
+
+Before running `make` ensure you have the correct AWS credentials set that allow the `aws ecr get-login` command to work.
+
+We copy `tools/imagepullsecret.sh` into the k3s container and execute it so it creates a pull secret called `aws-registry` in the same namespace that the chart is installed into.
+
+We also set `imagePullSecrets: ["aws-registry"]` in the values.yaml in the root of the repo so that this is only applied to charts when run under K3s and not when deployed to AWS clusters that will use an IAM role.
+
+Finally, inside your chart you will need to add the following to your template. Under `spec.template.spec` add.
+
+```
+      {{- if .Values.imagePullSecrets }} 
+      imagePullSecrets:
+      {{- range $sec := .Values.imagePullSecrets }}
+        - name: {{$sec | quote }}
+      {{- end }}
+      {{- end }}
+```
+
+This sets the imagePullSecret if the value is set.

@@ -1,0 +1,1 @@
+imagePullSecrets: ["aws-registry"]
