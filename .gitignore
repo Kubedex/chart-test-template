@@ -1,0 +1,4 @@
+.idea/
+inspec.lock
+kubeconfig.yaml
+*.tar.gz
