@@ -16,6 +16,8 @@ You can leave the K3s docker container running and continue to iterate installat
 
 To remove the chart from a running container use `make chartrm`. You can then install cleanly again using `make chart`.
 
+To investigate chart problems you can run `make ssh` to log into the K3s container and run the usual `kubectl` and `helm` commands to troubleshoot.
+
 To kill everything and start from scratch including terminating the K3s container use `make clean`.
 
 # Tests
