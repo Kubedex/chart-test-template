@@ -26,7 +26,7 @@ Sometimes it's useful to override the values.yaml for local testing. Put any ove
 
 # Gotchas
 
-The `Makefile` works out the name of the chart based up directories that exist in the repo. If you add more directories you'll need to exclude them.
+The `Makefile` works out the name of the chart based upon directories that exist in the repo. If you add more directories you'll need to exclude them.
 
 For example to exclude a `ci` and `docs` directory that you want to add update this line in the `Makefile`.
 
